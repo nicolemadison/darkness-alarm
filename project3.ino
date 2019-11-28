@@ -15,21 +15,29 @@ int bcdValues[10][4] =
 };
 
 //pin definitions
-const int tens3 = 3;
-const int tens2 = 4;
-const int tens1 = 5;
-const int tens0 = 6;
-const int ones3 = 7;
-const int ones2 = 8;
-const int ones1 = 9;
-const int ones0 = 10;
+const int tens3 = 4;
+const int tens2 = 5;
+const int tens1 = 6;
+const int tens0 = 7;
+const int ones3 = 8;
+const int ones2 = 9;
+const int ones1 = 10;
+const int ones0 = 11;
 const int ldr = 2;
-const int modeSwitch = 1;
+const int modeSwitch = 3;
+const int tensUp = A0;
+const int tensDown = A1;
+const int onesUp = A2;
+const int onesDown = A3;
+const int buzzer = 12;
 
 //important variables
 bool countdown = false;
 bool mode = true; //TRUE is SET, FALSE is RESET
+bool willBuzz = false;
 int currentCount = 99;
+int setTens = 0;
+int setOnes = 0;
 unsigned long timebefore = 0;
 unsigned long timeafter = 0;
 unsigned long interval = 1000;
@@ -44,8 +52,14 @@ void setup()
   pinMode(ones2, OUTPUT);
   pinMode(ones1, OUTPUT);
   pinMode(ones0, OUTPUT);
+  pinMode(tensUp, INPUT);
+  pinMode(tensDown, INPUT);
+  pinMode(onesUp, INPUT);
+  pinMode(onesDown, INPUT);
   pinMode(ldr, INPUT);
-  attachInterrupt(0, willCountdown, CHANGE);
+  pinMode(modeSwitch, INPUT);
+  pinMode(buzzer, OUTPUT);
+  attachInterrupt(2, willCountdown, CHANGE);
   attachInterrupt(3, changeMode, CHANGE);
   Serial.begin(9600);
 }
@@ -71,6 +85,10 @@ void changeMode()
   if(mode) //when going to SET mode
   {
     currentCount = 0;
+    setTens = 0;
+    setOnes = 0;
+    willBuzz = false;
+    digitalWrite(buzzer, LOW)
   }
   setDisplay(currentCount);
 }
@@ -84,11 +102,33 @@ void willCountdown()
 
 void loop() 
 {
-  if()//SET
+  if(mode)//SET
   {
+    if(digitalRead(tensUp) && setTens < 9)
+    {
+      setTens++;
+    }
+    if(digitalRead(tensDown) && setTens > 0)
+    {
+      setTens--;
+    }
+    if(digitalRead(onesUp) && setOnes < 9)
+    {
+      setOnes++;
+    }
+    if(digitalRead(onesDown) && setOnes > 0)
+    {
+      setOnes--;
+    }
+    currentCount = (setTens * 10) + setOnes;
+    setDisplay(currentCount);
   }
   else//RUN
   {
+    if(willBuzz)
+    {
+      digitalWrite(buzzer, HIGH);
+    }
     while(currentCount != 0)
     {
       timeafter = millis();
@@ -103,6 +143,10 @@ void loop()
         currentCount--;
         setDisplay(currentCount);
       }
+    }
+    if(currentCount == 0)
+    {
+      willBuzz = true;
     }
   }
 }
