@@ -34,7 +34,7 @@ const int buzzer = 12;
 //important variables
 bool countdown = false;
 bool mode = true; //TRUE is SET, FALSE is RESET
-int currentCount = 99;
+int currentCount = 0;
 int setTens = 0;
 int setOnes = 0;
 unsigned long timebefore = 0;
@@ -67,8 +67,10 @@ void setDisplay(int numberToSet)
 {
   setTens = numberToSet / 10;
   setOnes = numberToSet % 10;
+  Serial.println("currentCount: ");
   Serial.println(currentCount);
-  digitalWrite(tens3, bcdValues[setTens][3]); digitalWrite(tens2, bcdValues[setTens][2]);
+  digitalWrite(tens3, bcdValues[setTens][3]); 
+  digitalWrite(tens2, bcdValues[setTens][2]);
   digitalWrite(tens1, bcdValues[setTens][1]);
   digitalWrite(tens0, bcdValues[setTens][0]);
   digitalWrite(ones3, bcdValues[setOnes][3]);
@@ -107,6 +109,7 @@ void willCountdown()
 {
   countdown = (digitalRead(ldr));
   timebefore = timeafter;
+  Serial.println("willCountdown: ");
   Serial.println(countdown);
 }
 
@@ -142,6 +145,7 @@ void loop()
       {
         timebefore = timeafter;
       }
+      Serial.println("time elapsed: ");
       Serial.println(timeafter - timebefore);
       if(countdown && (timeafter - timebefore >= 1000))
       {
