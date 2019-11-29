@@ -34,6 +34,7 @@ const int buzzer = 12;
 //important variables
 bool countdown = false;
 bool mode = true; //TRUE is SET, FALSE is RESET
+bool buttonIsPressed = false;
 int currentCount = 0;
 int setTens = 0;
 int setOnes = 0;
@@ -117,24 +118,25 @@ void loop()
 {
   if(mode)//SET
   {
-    if(digitalRead(tensUp) && setTens < 9)
+    if(digitalRead(tensUp) && setTens < 9 && !buttonIsPressed)
     {
       setTens++;
     }
-    if(digitalRead(tensDown) && setTens > 0)
+    if(digitalRead(tensDown) && setTens > 0 && !buttonIsPressed)
     {
       setTens--;
     }
-    if(digitalRead(onesUp) && setOnes < 9)
+    if(digitalRead(onesUp) && setOnes < 9 && !buttonIsPressed)
     {
       setOnes++;
     }
-    if(digitalRead(onesDown) && setOnes > 0)
+    if(digitalRead(onesDown) && setOnes > 0 && !buttonIsPressed)
     {
       setOnes--;
     }
     currentCount = (setTens * 10) + setOnes;
     setDisplay(currentCount);
+    buttonIsPressed = digitalRead(tensUp) || digitalRead(tensDown) || digitalRead(onesUp) || digitalRead(onesDown);
   }
   else//RUN
   {
