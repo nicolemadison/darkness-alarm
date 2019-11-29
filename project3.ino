@@ -68,8 +68,7 @@ void setDisplay(int numberToSet)
   int setTens = numberToSet / 10;
   int setOnes = numberToSet % 10;
   Serial.println(currentCount);
-  digitalWrite(tens3, bcdValues[setTens][3]);
-  digitalWrite(tens2, bcdValues[setTens][2]);
+  digitalWrite(tens3, bcdValues[setTens][3]); digitalWrite(tens2, bcdValues[setTens][2]);
   digitalWrite(tens1, bcdValues[setTens][1]);
   digitalWrite(tens0, bcdValues[setTens][0]);
   digitalWrite(ones3, bcdValues[setOnes][3]);
@@ -97,6 +96,11 @@ void changeMode()
     setTens = 0;
     setOnes = 0;
     buzzOff();
+    Serial.println("SET MODE");
+  }
+  else
+  {
+    Serial.println("RUN MODE");
   }
   setDisplay(currentCount);
 }
