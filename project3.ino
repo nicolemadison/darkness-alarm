@@ -34,7 +34,6 @@ const int buzzer = 12;
 //important variables
 bool countdown = false;
 bool mode = true; //TRUE is SET, FALSE is RESET
-bool willBuzz = false;
 int currentCount = 99;
 int setTens = 0;
 int setOnes = 0;
@@ -59,8 +58,8 @@ void setup()
   pinMode(ldr, INPUT);
   pinMode(modeSwitch, INPUT);
   pinMode(buzzer, OUTPUT);
-  attachInterrupt(2, willCountdown, CHANGE);
-  attachInterrupt(3, changeMode, CHANGE);
+  attachInterrupt(0, willCountdown, CHANGE);
+  attachInterrupt(1, changeMode, CHANGE);
   Serial.begin(9600);
 }
 
@@ -79,6 +78,16 @@ void setDisplay(int numberToSet)
   digitalWrite(ones0, bcdValues[setOnes][0]);
 }
 
+void buzzOn()
+{
+  digitalWrite(buzzer, HIGH);
+}
+
+void buzzOff()
+{
+  digitalWrite(buzzer, LOW);
+}
+
 void changeMode()
 {
   mode = (digitalRead(modeSwitch));
@@ -87,8 +96,7 @@ void changeMode()
     currentCount = 0;
     setTens = 0;
     setOnes = 0;
-    willBuzz = false;
-    digitalWrite(buzzer, LOW)
+    buzzOff();
   }
   setDisplay(currentCount);
 }
@@ -125,10 +133,6 @@ void loop()
   }
   else//RUN
   {
-    if(willBuzz)
-    {
-      digitalWrite(buzzer, HIGH);
-    }
     while(currentCount != 0)
     {
       timeafter = millis();
@@ -146,7 +150,7 @@ void loop()
     }
     if(currentCount == 0)
     {
-      willBuzz = true;
+      buzzOn();
     }
   }
 }
